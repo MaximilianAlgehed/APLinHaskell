@@ -1,0 +1,7 @@
+*.swo
+*.swp
+*.o
+*.hi
+*.dyn_*
+*.log
+*.pdf
