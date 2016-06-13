@@ -1,6 +1,5 @@
 {-# LANGUAGE FlexibleInstances,UndecidableInstances,MultiParamTypeClasses,FlexibleContexts,ScopedTypeVariables #-}
 module APL where
-
 import Data.Vector as V
 import Test.QuickCheck
 
@@ -110,29 +109,16 @@ instance MIotable a => MIotable (V.Vector a) where
              | otherwise = undefined
 
 (<=>) :: APLDyadic a => a -> a -> a
-(<=>) = apl_zip apl_eq
-    where
-        apl_eq :: Int -> Int -> Int
-        apl_eq x y = if x == y then
-                        1
-                     else
-                        0
+(<=>) = apl_zip (\x y -> if x == y then 1 else 0)
 
 (</\>) :: APLDyadic a => a -> a -> a
-(</\>) = apl_zip apl_and
-    where
-        apl_and :: Int -> Int -> Int
-        apl_and x y = if x*y /= 0 then
-                        1
-                      else
-                        0
+(</\>) = apl_zip (\x y -> if x*y /= 0 then 1 else 0)
 
 (<\/>) :: APLDyadic a => a -> a -> a
-(<\/>) = apl_zip apl_or
+(<\/>) = apl_zip or 
     where
-        apl_or :: Int -> Int -> Int
-        apl_or 0 0 = 0
-        apl_or _ _ = 1
+        or 0 0 = 0
+        or _ _ = 1
 
 cross :: APLDyadic a => a -> a -> a
 cross = apl_zip (*)
@@ -160,6 +146,3 @@ v `iota_d` w = V.map (iota_index v) w
         iota_index v a = case findIndex (apl_eq a) v of
                             Just i  -> i+1
                             Nothing -> (V.length v)+1
-
-instance Arbitrary a => Arbitrary (V.Vector a) where
-    arbitrary = fmap V.fromList arbitrary
